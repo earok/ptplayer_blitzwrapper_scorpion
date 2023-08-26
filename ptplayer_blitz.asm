@@ -106,12 +106,12 @@ _blitz_mt_lib_finit:
 	bra	_mt_remove_cia
 	
 storeAddressRegisters	macro
-	movem.l a6,-(sp) ; Save registers for Blitz 2
+	movem.l a4-a6,-(sp) ; Save registers for Blitz 2
 	lea     CUSTOM,a6 ;Store the custom register in A6
 	endm
 	
 storeAddressRegistersVBR macro
-	movem.l a6,-(sp) ; Save registers for Blitz 2
+	movem.l a4-a6,-(sp) ; Save registers for Blitz 2
 	;Load vector base into A0
 	sub.l   a0,a0
 	move.l  4.w,a6
@@ -123,7 +123,7 @@ storeAddressRegistersVBR macro
 	endM
 
 restoreAddressRegisters	macro
-	movem.l (sp)+,a6	; Restore registers for Blitz
+	movem.l (sp)+,a4-a6	; Restore registers for Blitz
 	rts ;Return to Blitz
 	endm
 	
