@@ -1334,32 +1334,40 @@ set_all_volumes:
 	move.b	(a0,d0.w),d0
 	and.b	mt_chan1+n_enable(a4),d0
 	move.w	d0,AUD0VOL(a6)
+	ifd	VOL0_UNLOOPS
 	bne	.1
 	clr.b	mt_chan1+n_looped(a4)
+	endc
 .1:	tst.b	mt_chan2+n_sfxpri(a4)
 	bne	.2
 	move.w	mt_chan2+n_volume(a4),d0
 	move.b	(a0,d0.w),d0
 	and.b	mt_chan2+n_enable(a4),d0
 	move.w	d0,AUD1VOL(a6)
+	ifd	VOL0_UNLOOPS
 	bne	.2
-	clr.b	mt_chan1+n_looped(a4)
+	clr.b	mt_chan2+n_looped(a4)
+	endc
 .2:	tst.b	mt_chan3+n_sfxpri(a4)
 	bne	.3
 	move.w	mt_chan3+n_volume(a4),d0
 	move.b	(a0,d0.w),d0
 	and.b	mt_chan3+n_enable(a4),d0
 	move.w	d0,AUD2VOL(a6)
+	ifd	VOL0_UNLOOPS
 	bne	.3
-	clr.b	mt_chan1+n_looped(a4)
+	clr.b	mt_chan3+n_looped(a4)
+	endc
 .3:	tst.b	mt_chan4+n_sfxpri(a4)
 	bne	.4
 	move.w	mt_chan4+n_volume(a4),d0
 	move.b	(a0,d0.w),d0
 	and.b	mt_chan4+n_enable(a4),d0
 	move.w	d0,AUD3VOL(a6)
+	ifd	VOL0_UNLOOPS
 	bne	.4
-	clr.b	mt_chan1+n_looped(a4)
+	clr.b	mt_chan4+n_looped(a4)
+	endc
 .4:	rts
 
 
@@ -2358,8 +2366,10 @@ mt_tremolo:
 	and.b	n_enable(a2),d0
 	endc
 	move.w	d0,AUDVOL(a5)
+	ifd	VOL0_UNLOOPS
 	bne	.12
 	move.b	d7,n_looped(a2)
+	endc
 
 	; increase tremolopos by speed
 .12:	add.b	d4,n_tremolopos(a2)
@@ -2424,8 +2434,10 @@ set_vol:
 	and.b	n_enable(a2),d0
 	endc
 	move.w	d0,AUDVOL(a5)
+	ifd	VOL0_UNLOOPS
 	bne	.1
 	move.b	d7,n_looped(a2)
+	endc
 .1:	rts
 
 
@@ -2692,7 +2704,9 @@ mt_notecut:
 	bne	.1
 	move.w	d7,n_volume(a2)
 	move.w	d7,AUDVOL(a5)
+	ifd	VOL0_UNLOOPS
 	move.b	d7,n_looped(a2)
+	endc
 .1:	rts
 
 
