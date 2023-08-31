@@ -2380,7 +2380,6 @@ mt_volumeslide:
 ; cmd A x y (x = volume-up, y = volume-down)
 ; d4 = xy
 
-	move.w	n_period(a2),AUDPER(a5)	; @@@ not done in all players?
 	move.w	n_volume(a2),d0
 	moveq	#$0f,d1
 	and.b	d4,d1
@@ -2391,16 +2390,31 @@ mt_volumeslide:
 	add.b	d4,d0
 vol_slide_up:
 	cmp.b	#64,d0
-	bls	set_vol
+	bls	set_pervol
 	moveq	#64,d0
-	bra	set_vol
+	bra	set_pervol
 
 	; slide down, until 0
 vol_slide_down:
 	sub.b	d1,d0
-	bpl	set_vol
+	bpl	set_pervol
 	moveq	#0,d0
-	bra	set_vol
+
+set_pervol:
+	move.w	n_period(a2),AUDPER(a5)
+set_vol:
+	move.w	d0,n_volume(a2)
+	ifeq	MINIMAL
+	move.l	mt_MasterVolTab(a4),a0
+	move.b	(a0,d0.w),d0
+	and.b	n_enable(a2),d0
+	endc
+	move.w	d0,AUDVOL(a5)
+	ifd	VOL0_UNLOOPS
+	bne	.1
+	move.b	d7,n_looped(a2)
+	endc
+.1:	rts
 
 
 mt_posjump:
@@ -2425,20 +2439,7 @@ mt_volchange:
 	cmp.w	#64,d0
 	bls	set_vol
 	moveq	#64,d0
-
-set_vol:
-	move.w	d0,n_volume(a2)
-	ifeq	MINIMAL
-	move.l	mt_MasterVolTab(a4),a0
-	move.b	(a0,d0.w),d0
-	and.b	n_enable(a2),d0
-	endc
-	move.w	d0,AUDVOL(a5)
-	ifd	VOL0_UNLOOPS
-	bne	.1
-	move.b	d7,n_looped(a2)
-	endc
-.1:	rts
+	bra	set_vol
 
 
 mt_patternbrk:
